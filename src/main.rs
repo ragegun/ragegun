@@ -1,9 +1,9 @@
 use std::collections::{HashMap, HashSet};
-
 use std::io::BufReader;
 
 use lazy_static::lazy_static;
 use nlprule::tokenizer::Tokenizer;
+
 use crate::assets::{EXEC_AGE, EXEC_DISTRESS, EXEC_EMOLEX, EXEC_GENDER, EXEC_PERMA};
 
 pub mod assets;
@@ -12,7 +12,7 @@ type RagegunData = HashMap<String, f32>;
 
 lazy_static! {
     pub static ref EN_TOKENIZER: Tokenizer = {
-        let model = include_bytes!("./assets/files/en_tokenizer.bin");
+        let model = include_bytes!(concat!(env!("ASSET_DIR"), "/en_tokenizer.bin"));
 
         Tokenizer::from_reader(BufReader::new(&*model.to_vec())).unwrap()
     };

@@ -14,7 +14,7 @@ type RagegunWeights = HashMap<String, HashMap<String, f32>>;
 lazy_static! {
     pub static ref WEIGHTS_AGE: Vec<types::weighted::LexiconWeighted> =
         csv::Reader::from_reader(
-            &*include_bytes!("./files/age.csv").to_vec()
+            &*include_bytes!(concat!(env!("ASSET_DIR"), "/age.csv")).to_vec()
         )
         .deserialize()
         .filter_map(|i| i.ok())
@@ -26,7 +26,7 @@ lazy_static! {
 lazy_static! {
     pub static ref WEIGHTS_DISTRESS: Vec<types::rated::LexiconRated> =
         csv::Reader::from_reader(
-            &*include_bytes!("./files/distress.csv").to_vec()
+            &*include_bytes!(concat!(env!("ASSET_DIR"), "/distress.csv")).to_vec()
         )
         .deserialize()
         .filter_map(|i| i.ok())
@@ -38,7 +38,7 @@ lazy_static! {
 lazy_static! {
     pub static ref WEIGHTS_EMOLEX: Vec<(Vec<String>, Vec<emolex::EmoLexEmotion>)> =
         csv::Reader::from_reader(
-            &*include_bytes!("./files/emolex-full.csv").to_vec()
+            &*include_bytes!(concat!(env!("ASSET_DIR"), "/emolex-full.csv")).to_vec()
         )
         .deserialize::<emolex::EmoLexRaw>()
         .filter_map(|i| i.ok())
@@ -51,7 +51,7 @@ lazy_static! {
 lazy_static! {
     pub static ref WEIGHTS_GENDER: Vec<types::weighted::LexiconWeighted> =
         csv::Reader::from_reader(
-            &*include_bytes!("./files/gender.csv").to_vec()
+            &*include_bytes!(concat!(env!("ASSET_DIR"), "/gender.csv")).to_vec()
         )
         .deserialize()
         .filter_map(|i| i.ok())
@@ -63,7 +63,7 @@ lazy_static! {
 lazy_static! {
     pub static ref WEIGHTS_PERMA: Vec<types::weighted_with_class::LexiconWeightedWithClass<perma::PERMAClass>> =
         csv::Reader::from_reader(
-            &*include_bytes!("./files/perma.csv").to_vec()
+            &*include_bytes!(concat!(env!("ASSET_DIR"), "/perma.csv")).to_vec()
         )
         .deserialize()
         .filter_map(|i| i.ok())

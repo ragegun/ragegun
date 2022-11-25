@@ -1,3 +1,5 @@
+use std::env;
+use std::fmt::format;
 use std::io::Cursor;
 
 use http_req;
@@ -32,8 +34,11 @@ pub fn download_asset(asset: &str, out_path: &str) -> Result<(), http_req::error
 }
 
 fn main() {
+    let dir = env::var("OUT_DIR").unwrap();
+
+    let basename = format!("assets");
     for file in LEXICA.iter().chain(TOKENIZER.iter()) {
-        let out_path = format!("src/assets/files/{}", file);
+        let out_path = format!("{}/{}", &dir, file);
 
         // check if file exists
         if std::path::Path::new(&out_path).exists() {
@@ -42,4 +47,6 @@ fn main() {
 
         download_asset(&file, &out_path).unwrap();
     }
+
+    println!("cargo:rustc-env=ASSET_DIR={}", &dir);
 }

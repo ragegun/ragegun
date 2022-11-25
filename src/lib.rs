@@ -15,7 +15,7 @@ type RagegunData = HashMap<String, f32>;
 
 lazy_static! {
     pub(crate) static ref EN_TOKENIZER: Tokenizer = {
-        let model = include_bytes!("./assets/files/en_tokenizer.bin");
+        let model = include_bytes!(concat!(env!("ASSET_DIR"), "/en_tokenizer.bin"));
 
         Tokenizer::from_reader(BufReader::new(&*model.to_vec())).unwrap()
     };
