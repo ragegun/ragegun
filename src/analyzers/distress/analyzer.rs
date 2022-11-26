@@ -6,7 +6,7 @@ use crate::TextItem;
 use super::data::WEIGHTS_DISTRESS;
 
 pub struct Distress {
-    pub items: HashMap<String, f32>,
+    pub items: HashMap<String, f64>,
 }
 
 impl Distress {
@@ -23,15 +23,15 @@ impl Distress {
     }
 
     #[inline(always)]
-    pub fn get_entry(&self, term: &str) -> Option<&f32> {
+    pub fn get_entry(&self, term: &str) -> Option<&f64> {
         self.items.get(term)
     }
 
     #[inline(always)]
-    pub fn get_score(&self, item: &TextItem, word: &str) -> Option<f32> {
+    pub fn get_score(&self, item: &TextItem, word: &str) -> Option<f64> {
         let word_coeff =
-            ((*item.word_freqs.get(word)?) as f32)
-                .div(item.word_count as f32)
+            ((*item.word_freqs.get(word)?) as f64)
+                .div(item.word_count as f64)
                 .mul(self.get_entry(word)?);
 
         Some(
@@ -40,10 +40,10 @@ impl Distress {
     }
 
     #[inline(always)]
-    pub fn run(&self, item: &TextItem) -> f32 {
+    pub fn run(&self, item: &TextItem) -> f64 {
         item.word_freqs
             .keys()
             .filter_map(|x| self.get_score(item, x))
-            .sum::<f32>()
+            .sum::<f64>()
     }
 }

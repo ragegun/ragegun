@@ -1,7 +1,7 @@
 use lazy_static::lazy_static;
 
-use super::super::emolex_shared::EmoLexEmotion;
 use super::analyzer::EmoLexRaw;
+use super::super::emolex_shared::EmoLexEmotion;
 
 lazy_static! {
     pub static ref WEIGHTS_EMOLEX_ALL_LANGUAGES: Vec<(Vec<String>, Vec<EmoLexEmotion>)> =

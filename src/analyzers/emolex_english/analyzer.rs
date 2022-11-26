@@ -12,7 +12,7 @@ use super::super::emolex_shared::{EmoLexEmotion, EmoLexEmotions, EmoLexEmotionsR
 pub struct EmoLexRaw {
     term: String,
     class: String,
-    weight: f32,
+    weight: f64,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -37,19 +37,17 @@ impl EMOLEX {
     }
 
     pub fn get_entry(&self, term: &str) -> Option<&Vec<EmoLexEmotion>> {
-        Some(
-            self
+        self
                 .items
-                .get(term)?,
-        )
+                .get(term)
     }
 
-    pub fn get_score(&self, item: &TextItem, word: &str) -> Option<Vec<(EmoLexEmotion, f32)>> {
+    pub fn get_score(&self, item: &TextItem, word: &str) -> Option<Vec<(EmoLexEmotion, f64)>> {
         let word_freqs =
-            *item.word_freqs.get(word)? as f32;
+            *item.word_freqs.get(word)? as f64;
 
         let total_freqs =
-            item.word_count as f32;
+            item.word_count as f64;
 
         Some(
             self.get_entry(word)?

@@ -1,12 +1,12 @@
 use std::env;
 use std::io::Cursor;
 
-use http_req;
+
 use http_req::request;
 
-const DOWNLOAD_BASE_URL: &'static str = "https://raw.githubusercontent.com/ragegun/ragegun-assets/master/";
+const DOWNLOAD_BASE_URL: &str = "https://raw.githubusercontent.com/ragegun/ragegun-assets/master/";
 
-const TOKENIZER: [&'static str; 1] = [
+const TOKENIZER: [&str; 1] = [
     "en_tokenizer.bin"
 ];
 
@@ -58,7 +58,7 @@ fn main() {
             continue;
         }
 
-        download_asset(&file, &out_path).unwrap();
+        download_asset(file, &out_path).unwrap();
     }
 
     println!("cargo:rustc-env=ASSET_DIR={}", &dir);

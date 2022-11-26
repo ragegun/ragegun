@@ -1,4 +1,5 @@
 use lazy_static::lazy_static;
+
 use super::analyzer::EmoLexRaw;
 
 lazy_static! {

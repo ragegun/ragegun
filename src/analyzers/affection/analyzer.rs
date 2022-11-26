@@ -15,8 +15,8 @@ pub enum AffectionClass {
     Intensity,
 }
 
-pub const INTERCEPTS_AFFECTION: f32 = 5.03710472069;
-pub const INTERCEPTS_INTENSITY: f32 = 2.39976263142;
+pub const INTERCEPTS_AFFECTION: f64 = 5.03710472069;
+pub const INTERCEPTS_INTENSITY: f64 = 2.39976263142;
 
 #[derive(Debug, Copy, Clone, PartialEq, Serialize, Deserialize)]
 pub enum AffectionInterpretation {
@@ -28,8 +28,8 @@ pub enum AffectionInterpretation {
     Unknown,
 }
 
-impl From<f32> for AffectionInterpretation {
-    fn from(value: f32) -> Self {
+impl From<f64> for AffectionInterpretation {
+    fn from(value: f64) -> Self {
         match value {
             _ if value > 0.0 && value < 1.0 => AffectionInterpretation::Low,
             _ if value < 3.0 => AffectionInterpretation::Moderate,
@@ -49,8 +49,8 @@ pub struct AffectionAnalysis {
 
 #[derive(Debug, Copy, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AffectionAnalysisRaw {
-    pub affection: f32,
-    pub intensity: f32,
+    pub affection: f64,
+    pub intensity: f64,
 }
 
 impl AffectionAnalysisRaw {
@@ -77,7 +77,7 @@ impl From<AffectionAnalysisRaw> for AffectionAnalysis {
 }
 
 pub struct Affection {
-    pub items: HashMap<String, Vec<(AffectionClass, f32)>>,
+    pub items: HashMap<String, Vec<(AffectionClass, f64)>>,
 }
 
 impl Affection {
@@ -97,14 +97,14 @@ impl Affection {
     }
 
     #[inline(always)]
-    pub fn get_entry(&self, term: &str) -> Option<&Vec<(AffectionClass, f32)>> {
+    pub fn get_entry(&self, term: &str) -> Option<&Vec<(AffectionClass, f64)>> {
         self.items.get(term)
     }
 
     #[inline(always)]
-    pub fn get_score(&self, item: &TextItem, word: &str) -> Option<Vec<(AffectionClass, f32)>> {
-        let word_freq = (*item.word_freqs.get(word)?) as f32;
-        let total_freqs = item.word_freqs.len() as f32;
+    pub fn get_score(&self, item: &TextItem, word: &str) -> Option<Vec<(AffectionClass, f64)>> {
+        let word_freq = (*item.word_freqs.get(word)?) as f64;
+        let total_freqs = item.word_freqs.len() as f64;
 
         Some(
             self.get_entry(word)?

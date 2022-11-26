@@ -16,7 +16,7 @@ impl Ragegun {
     }
 
     #[cfg(feature = "age")]
-    pub fn age(&self) -> f32 {
+    pub fn age(&self) -> f64 {
         analyzers::age::EXEC_AGE.run(&self.data)
     }
 
@@ -26,7 +26,7 @@ impl Ragegun {
     }
 
     #[cfg(feature = "distress")]
-    pub fn distress(&self) -> f32 {
+    pub fn distress(&self) -> f64 {
         analyzers::distress::EXEC_DISTRESS.run(&self.data)
     }
 

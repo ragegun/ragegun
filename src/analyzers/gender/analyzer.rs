@@ -15,8 +15,8 @@ pub enum GenderInterpretation {
 }
 
 pub struct Gender {
-    pub items: HashMap<String, f32>,
-    pub intercept: f32,
+    pub items: HashMap<String, f64>,
+    pub intercept: f64,
 }
 
 impl Gender {
@@ -38,15 +38,15 @@ impl Gender {
     }
 
     #[inline(always)]
-    pub fn get_entry(&self, term: &str) -> Option<&f32> {
+    pub fn get_entry(&self, term: &str) -> Option<&f64> {
         self.items.get(term)
     }
 
     #[inline(always)]
-    pub fn get_score(&self, item: &TextItem, word: &str) -> Option<f32> {
+    pub fn get_score(&self, item: &TextItem, word: &str) -> Option<f64> {
         let word_coeff =
-            ((*item.word_freqs.get(word)?) as f32)
-                .div(item.word_count as f32)
+            ((*item.word_freqs.get(word)?) as f64)
+                .div(item.word_count as f64)
                 .mul(self.get_entry(word)?);
 
         Some(
@@ -59,7 +59,7 @@ impl Gender {
         match item.word_freqs
             .keys()
             .filter_map(|x| self.get_score(item, x))
-            .sum::<f32>()
+            .sum::<f64>()
             + self.intercept {
             x if x < 0.0 => GenderInterpretation::Male,
             x if x > 0.0 => GenderInterpretation::Female,

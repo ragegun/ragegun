@@ -47,7 +47,7 @@ pub struct PERMAAnalysis {
     pub accomplishment: PERMAInterpretation,
 }
 
-fn establish_interpretation(val: f32) -> PERMAInterpretation {
+fn establish_interpretation(val: f64) -> PERMAInterpretation {
     match val {
         _ if val > 0.0 => PERMAInterpretation::Positive,
         _ if val < 0.0 => PERMAInterpretation::Negative,
@@ -55,8 +55,8 @@ fn establish_interpretation(val: f32) -> PERMAInterpretation {
     }
 }
 
-impl From<HashMap<PERMAClass, f32>> for PERMAAnalysis {
-    fn from(value: HashMap<PERMAClass, f32>) -> Self {
+impl From<HashMap<PERMAClass, f64>> for PERMAAnalysis {
+    fn from(value: HashMap<PERMAClass, f64>) -> Self {
         let pos_p = value.get(&PERMAClass::PositiveP).unwrap_or(&0.0);
         let neg_p = value.get(&PERMAClass::NegativeP).unwrap_or(&0.0);
 
@@ -83,7 +83,7 @@ impl From<HashMap<PERMAClass, f32>> for PERMAAnalysis {
 }
 
 pub struct PERMA {
-    pub items: HashMap<String, Vec<(PERMAClass, f32)>>,
+    pub items: HashMap<String, Vec<(PERMAClass, f64)>>,
 }
 
 impl PERMA {
@@ -103,22 +103,22 @@ impl PERMA {
     }
 
     #[inline(always)]
-    pub fn get_entry(&self, term: &str) -> Option<&Vec<(PERMAClass, f32)>> {
+    pub fn get_entry(&self, term: &str) -> Option<&Vec<(PERMAClass, f64)>> {
         self.items.get(term)
     }
 
     #[inline(always)]
-    pub fn get_score(&self, item: &TextItem, word: &str, freq_ref: u32) -> Option<Vec<(PERMAClass, f32)>> {
+    pub fn get_score(&self, item: &TextItem, word: &str, freq_ref: u64) -> Option<Vec<(PERMAClass, f64)>> {
         let word_freqs =
             *item.bigram_freqs
                 .get(word)
                 .unwrap_or(
                     item.word_freqs
                         .get(word)?
-                ) as f32;
+                ) as f64;
 
         let total_freqs =
-            freq_ref as f32;
+            freq_ref as f64;
 
         Some(
             self.get_entry(word)?
@@ -136,7 +136,7 @@ impl PERMA {
     }
 
     #[inline(always)]
-    pub fn total_freqs(&self, item: &TextItem) -> u32 {
+    pub fn total_freqs(&self, item: &TextItem) -> u64 {
         item.bigram_freqs
             .keys()
             .chain(

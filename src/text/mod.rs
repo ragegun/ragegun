@@ -19,11 +19,11 @@ pub struct TextItem {
     pub sentence_words: Vec<Vec<String>>,
     pub bigrams: Vec<String>,
     pub word_freqs: HashMap<String, usize>,
-    pub word_freq_avg: f32,
-    pub word_count: u32,
+    pub word_freq_avg: f64,
+    pub word_count: u64,
     pub bigram_freqs: HashMap<String, usize>,
-    pub bigram_freq_avg: f32,
-    pub bigram_count: u32,
+    pub bigram_freq_avg: f64,
+    pub bigram_count: u64,
 
     pub filter: Option<HashSet<String>>,
 }
@@ -112,7 +112,7 @@ impl TextItem {
             word_count += 1;
         }
 
-        self.word_freq_avg = wordfreqs.values().sum::<usize>() as f32 / wordfreqs.len() as f32;
+        self.word_freq_avg = wordfreqs.values().sum::<usize>() as f64 / wordfreqs.len() as f64;
         self.word_freqs = wordfreqs;
         self.word_count = word_count;
     }
@@ -135,7 +135,7 @@ impl TextItem {
             bigram_count += 1;
         }
 
-        self.bigram_freq_avg = bigramfreqs.values().sum::<usize>() as f32 / bigramfreqs.len() as f32;
+        self.bigram_freq_avg = bigramfreqs.values().sum::<usize>() as f64 / bigramfreqs.len() as f64;
         self.bigram_freqs = bigramfreqs;
         self.bigram_count = bigram_count;
     }

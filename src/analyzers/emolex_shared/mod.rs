@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Copy, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub enum EmolexInterpretation {
@@ -11,8 +11,8 @@ pub enum EmolexInterpretation {
     Unknown,
 }
 
-impl From<f32> for EmolexInterpretation {
-    fn from(value: f32) -> Self {
+impl From<f64> for EmolexInterpretation {
+    fn from(value: f64) -> Self {
         match value {
             _ if value > 0.0 && value < 0.1 => EmolexInterpretation::Low,
             _ if value < 0.3 => EmolexInterpretation::Moderate,
@@ -73,16 +73,16 @@ pub struct EmoLexEmotions {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct EmoLexEmotionsRaw {
-    pub anger: f32,
-    pub anticipation: f32,
-    pub disgust: f32,
-    pub fear: f32,
-    pub joy: f32,
-    pub negative: f32,
-    pub positive: f32,
-    pub sadness: f32,
-    pub surprise: f32,
-    pub trust: f32,
+    pub anger: f64,
+    pub anticipation: f64,
+    pub disgust: f64,
+    pub fear: f64,
+    pub joy: f64,
+    pub negative: f64,
+    pub positive: f64,
+    pub sadness: f64,
+    pub surprise: f64,
+    pub trust: f64,
 }
 
 impl From<EmoLexEmotionsRaw> for EmoLexEmotions {

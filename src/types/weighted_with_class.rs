@@ -4,5 +4,5 @@ use serde::{Deserialize, Serialize};
 pub struct LexiconWeightedWithClass<T> {
     pub term: String,
     pub class: T,
-    pub weight: f32,
+    pub weight: f64,
 }
