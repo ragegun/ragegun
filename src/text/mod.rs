@@ -177,6 +177,13 @@ impl TextItem {
     }
 
     #[inline(always)]
+    pub fn get_term_frequency(&self, term: &str) -> Option<&usize> {
+        self.word_freqs
+            .get(term)
+            .or_else(|| self.bigram_freqs.get(term))
+    }
+
+    #[inline(always)]
     pub fn words(&self) -> Vec<&String> {
         self.sentence_words
             .iter()

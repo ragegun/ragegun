@@ -32,11 +32,11 @@ impl Age {
     }
 
     #[inline(always)]
-    pub fn get_score(&self, item: &TextItem, word: &str) -> Option<f64> {
+    pub fn get_score(&self, item: &TextItem, term: &str) -> Option<f64> {
         let word_coeff =
-            ((*item.word_freqs.get(word)?) as f64)
+            ((*item.get_term_frequency(term)?) as f64)
                 .div(item.word_count as f64)
-                .mul(self.get_entry(word)?);
+                .mul(self.get_entry(term)?);
 
         Some(
             word_coeff

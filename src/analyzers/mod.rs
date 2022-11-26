@@ -21,3 +21,6 @@ pub mod emolex_english;
 
 #[cfg(feature = "emolex_shared")]
 pub mod emolex_shared;
+
+#[cfg(feature = "temporal")]
+pub mod temporal_orientation;

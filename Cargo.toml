@@ -10,7 +10,7 @@ exclude = ["src/assets/files/*"]
 
 
 [features]
-default = ["affection", "age", "gender", "distress", "emolex_english", "perma"]
+default = ["affection", "age", "gender", "distress", "emolex_english", "perma", "temporal"]
 age = []
 affection = []
 distress = []
@@ -20,6 +20,7 @@ emolex_shared = []
 emolex_english = ["emolex_shared"]
 # all language emolex is 20MB
 emolex_all_languages = ["emolex_shared"]
+temporal = []
 
 [lib]
 crate-type = ["cdylib", "rlib"]

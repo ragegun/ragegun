@@ -108,20 +108,15 @@ impl PERMA {
     }
 
     #[inline(always)]
-    pub fn get_score(&self, item: &TextItem, word: &str, freq_ref: u64) -> Option<Vec<(PERMAClass, f64)>> {
+    pub fn get_score(&self, item: &TextItem, term: &str) -> Option<Vec<(PERMAClass, f64)>> {
         let word_freqs =
-            *item.bigram_freqs
-                .get(word)
-                .unwrap_or(
-                    item.word_freqs
-                        .get(word)?
-                ) as f64;
+            *item.get_term_frequency(term)? as f64;
 
         let total_freqs =
-            freq_ref as f64;
+            item.word_count as f64;
 
         Some(
-            self.get_entry(word)?
+            self.get_entry(term)?
                 .iter()
                 .map(|(class, weight)| {
                     (
@@ -136,24 +131,7 @@ impl PERMA {
     }
 
     #[inline(always)]
-    pub fn total_freqs(&self, item: &TextItem) -> u64 {
-        item.bigram_freqs
-            .keys()
-            .chain(
-                item.word_freqs
-                    .keys()
-            )
-            .filter_map(|k|
-                self.get_entry(k)
-                    .map(|_| 1)
-            )
-            .sum()
-    }
-
-    #[inline(always)]
     pub fn run(&self, item: &TextItem) -> PERMAAnalysis {
-        let freq_ref = self.total_freqs(item);
-
         item
             .bigram_freqs
             .keys()
@@ -161,7 +139,7 @@ impl PERMA {
                 item.word_freqs
                     .keys()
             )
-            .filter_map(|word| self.get_score(item, word, freq_ref))
+            .filter_map(|word| self.get_score(item, word))
             .flatten()
             .fold(HashMap::new(), |mut acc, (class, score)| {
                 acc.entry(class)

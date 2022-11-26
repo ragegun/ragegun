@@ -102,13 +102,16 @@ impl Affection {
     }
 
     #[inline(always)]
-    pub fn get_score(&self, item: &TextItem, word: &str) -> Option<Vec<(AffectionClass, f64)>> {
-        let word_freq = (*item.word_freqs.get(word)?) as f64;
-        let total_freqs = item.word_freqs.len() as f64;
+    pub fn get_score(&self, item: &TextItem, term: &str) -> Option<Vec<(AffectionClass, f64)>> {
+        let word_freq =
+            *item.get_term_frequency(term)? as f64;
+
+        let total_freqs =
+            item.word_count as f64;
 
         Some(
-            self.get_entry(word)?
-                .iter()
+            self.get_entry(term)?
+                .iter() // Get the entry for the term
                 .map(|(class, weight)| {
                     (
                         *class,

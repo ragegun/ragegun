@@ -42,15 +42,15 @@ impl EMOLEX {
                 .get(term)
     }
 
-    pub fn get_score(&self, item: &TextItem, word: &str) -> Option<Vec<(EmoLexEmotion, f64)>> {
+    pub fn get_score(&self, item: &TextItem, term: &str) -> Option<Vec<(EmoLexEmotion, f64)>> {
         let word_freqs =
-            *item.word_freqs.get(word)? as f64;
+            *item.get_term_frequency(term)? as f64;
 
         let total_freqs =
             item.word_count as f64;
 
         Some(
-            self.get_entry(word)?
+            self.get_entry(term)?
                 .iter()
                 .map(|emotion|
                     (

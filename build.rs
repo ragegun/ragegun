@@ -48,6 +48,9 @@ fn main() {
     #[cfg(feature = "perma")]
     lexica.push("perma.csv");
 
+    #[cfg(feature = "temporal")]
+    lexica.push("temporal.csv");
+
     let dir = env::var("OUT_DIR").unwrap();
 
     for file in lexica.iter().chain(TOKENIZER.iter()) {
