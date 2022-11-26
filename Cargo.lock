@@ -480,7 +480,7 @@ dependencies = [
 
 [[package]]
 name = "ragegun"
-version = "0.2.2"
+version = "0.2.3-alpha.0"
 dependencies = [
  "csv",
  "http_req",
