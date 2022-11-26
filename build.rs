@@ -7,14 +7,6 @@ use http_req::request;
 
 const DOWNLOAD_BASE_URL: &'static str = "https://raw.githubusercontent.com/ragegun/ragegun-assets/master/";
 
-const LEXICA: [&'static str; 5] = [
-    "age.csv",
-    "distress.csv",
-    "emolex-full.csv",
-    "gender.csv",
-    "perma.csv"
-];
-
 const TOKENIZER: [&'static str; 1] = [
     "en_tokenizer.bin"
 ];
@@ -34,10 +26,32 @@ pub fn download_asset(asset: &str, out_path: &str) -> Result<(), http_req::error
 }
 
 fn main() {
+    let mut lexica = Vec::<&str>::new();
+
+    #[cfg(feature = "age")]
+    lexica.push("age.csv");
+
+    #[cfg(feature = "affection")]
+    lexica.push("affection.csv");
+
+    #[cfg(feature = "distress")]
+    lexica.push("distress.csv");
+
+    #[cfg(feature = "emolex_all_languages")]
+    lexica.push("emolex-full.csv");
+
+    #[cfg(feature = "emolex_english")]
+    lexica.push("emolex.csv");
+
+    #[cfg(feature = "gender")]
+    lexica.push("gender.csv");
+
+    #[cfg(feature = "perma")]
+    lexica.push("perma.csv");
+
     let dir = env::var("OUT_DIR").unwrap();
 
-    let basename = format!("assets");
-    for file in LEXICA.iter().chain(TOKENIZER.iter()) {
+    for file in lexica.iter().chain(TOKENIZER.iter()) {
         let out_path = format!("{}/{}", &dir, file);
 
         // check if file exists

@@ -8,6 +8,18 @@ readme = "README.md"
 build = "build.rs"
 exclude = ["src/assets/files/*"]
 
+
+[features]
+default = ["affection", "age", "gender", "distress", "emolex_english", "perma"]
+age = []
+affection = []
+distress = []
+gender = []
+perma = []
+emolex_english = []
+# all language emolex is 20MB
+emolex_all_languages = []
+
 [lib]
 crate-type = ["cdylib", "rlib"]
 

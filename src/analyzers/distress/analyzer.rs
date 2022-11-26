@@ -1,8 +1,9 @@
 use std::collections::HashMap;
 use std::ops::{Div, Mul};
 
-use crate::assets::WEIGHTS_DISTRESS;
 use crate::TextItem;
+
+use super::data::WEIGHTS_DISTRESS;
 
 pub struct Distress {
     pub items: HashMap<String, f32>,

@@ -3,8 +3,11 @@ use std::ops::{Div, Mul};
 
 use serde::{Deserialize, Serialize};
 
-use crate::assets::WEIGHTS_EMOLEX;
 use crate::TextItem;
+
+use super::data::WEIGHTS_EMOLEX_ALL_LANGUAGES;
+use super::super::emolex_shared::{EmoLexEmotions, EmoLexEmotionsRaw};
+use super::super::emolex_shared::EmoLexEmotion;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct EmoLexRaw {
@@ -304,34 +307,6 @@ impl EmoLexRaw {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub enum EmoLexEmotion {
-    Anger,
-    Anticipation,
-    Disgust,
-    Fear,
-    Joy,
-    Negative,
-    Positive,
-    Sadness,
-    Surprise,
-    Trust,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
-pub struct EmoLexEmotions {
-    anger: f32,
-    anticipation: f32,
-    disgust: f32,
-    fear: f32,
-    joy: f32,
-    negative: f32,
-    positive: f32,
-    sadness: f32,
-    surprise: f32,
-    trust: f32,
-}
-
 #[derive(Debug, Clone, PartialEq)]
 pub struct EMOLEX {
     pub emotions: Vec<&'static Vec<EmoLexEmotion>>,
@@ -343,7 +318,7 @@ impl EMOLEX {
         let mut emotion_ref = Vec::new();
         let mut items = HashMap::new();
 
-        for (words, emotions) in WEIGHTS_EMOLEX.iter() {
+        for (words, emotions) in WEIGHTS_EMOLEX_ALL_LANGUAGES.iter() {
             emotion_ref.push(emotions);
 
             let emotion = emotion_ref.len() - 1;
@@ -374,7 +349,7 @@ impl EMOLEX {
             *item.word_freqs.get(word)? as f32;
 
         let total_freqs =
-            item.word_freqs.len() as f32;
+            item.word_count as f32;
 
         Some(
             self.get_entry(word)?
@@ -394,7 +369,7 @@ impl EMOLEX {
             .keys()
             .filter_map(|word| self.get_score(item, word))
             .flatten()
-            .fold(EmoLexEmotions::default(), |mut acc, (emotion, score)| {
+            .fold(EmoLexEmotionsRaw::default(), |mut acc, (emotion, score)| {
                 match *emotion {
                     EmoLexEmotion::Anger => { acc.anger += score; }
                     EmoLexEmotion::Anticipation => { acc.anticipation += score; }
@@ -406,9 +381,11 @@ impl EMOLEX {
                     EmoLexEmotion::Sadness => { acc.sadness += score; }
                     EmoLexEmotion::Surprise => { acc.surprise += score; }
                     EmoLexEmotion::Trust => { acc.trust += score; }
+                    EmoLexEmotion::Unknown => unimplemented!()
                 }
 
                 acc
             })
+            .into()
     }
 }

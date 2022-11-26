@@ -1,23 +1,35 @@
 use std::collections::HashMap;
 use std::ops::{Div, Mul};
 
-use crate::assets::WEIGHTS_AGE;
+use serde::{Deserialize, Serialize};
+
 use crate::TextItem;
 
-pub struct Age {
+use super::data::WEIGHTS_GENDER;
+
+#[derive(Debug, Copy, Clone, PartialEq, Serialize, Deserialize)]
+pub enum GenderInterpretation {
+    Male,
+    Female,
+    Unknown,
+}
+
+pub struct Gender {
     pub items: HashMap<String, f32>,
     pub intercept: f32,
 }
 
-impl Age {
+impl Gender {
     pub fn new() -> Self {
         let mut items = HashMap::new();
 
-        for item in WEIGHTS_AGE.iter() {
+        for item in WEIGHTS_GENDER.iter() {
             items.insert(item.term.clone(), item.weight);
         }
 
-        let intercept = *items.get("_intercept").expect("Cannot find intercept value!");
+        let intercept =
+            *items.get("_intercept")
+                .expect("Cannot find intercept value!");
 
         Self {
             items,
@@ -43,11 +55,15 @@ impl Age {
     }
 
     #[inline(always)]
-    pub fn run(&self, item: &TextItem) -> f32 {
-        item.word_freqs
+    pub fn run(&self, item: &TextItem) -> GenderInterpretation {
+        match item.word_freqs
             .keys()
             .filter_map(|x| self.get_score(item, x))
             .sum::<f32>()
-            + self.intercept
+            + self.intercept {
+            x if x < 0.0 => GenderInterpretation::Male,
+            x if x > 0.0 => GenderInterpretation::Female,
+            _ => GenderInterpretation::Unknown,
+        }
     }
 }

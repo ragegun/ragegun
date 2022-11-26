@@ -1,5 +1,5 @@
 /target
 .DS_Store
 
-src/assets/files*/*
+files/
 .idea/

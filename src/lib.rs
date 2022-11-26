@@ -1,198 +1,8 @@
-use std::collections::{HashMap, HashSet};
-use std::io::BufReader;
+pub use text::TextItem;
 
-use lazy_static::lazy_static;
-use nlprule::tokenizer::Tokenizer;
-
-use crate::assets::{EXEC_AGE, EXEC_DISTRESS, EXEC_EMOLEX, EXEC_GENDER, EXEC_PERMA};
-use crate::assets::emolex::EmoLexEmotions;
-use crate::assets::perma::PERMAAnalysis;
-use crate::assets::types::values::GenderInterpretation;
-
-pub mod assets;
-
-type RagegunData = HashMap<String, f32>;
-
-lazy_static! {
-    pub(crate) static ref EN_TOKENIZER: Tokenizer = {
-        let model = include_bytes!(concat!(env!("ASSET_DIR"), "/en_tokenizer.bin"));
-
-        Tokenizer::from_reader(BufReader::new(&*model.to_vec())).unwrap()
-    };
-}
-
-#[derive(Debug, Clone)]
-pub struct TextItem {
-    pub text: String,
-    pub clean_text: String,
-    pub sentence_words: Vec<Vec<String>>,
-    pub bigrams: Vec<String>,
-    pub word_freqs: HashMap<String, usize>,
-    pub word_freq_avg: f32,
-    pub word_count: u32,
-    pub bigram_freqs: HashMap<String, usize>,
-    pub bigram_freq_avg: f32,
-    pub bigram_count: u32,
-
-    pub filter: Option<HashSet<String>>,
-}
-
-impl TextItem {
-    pub fn new(text: &str) -> Self {
-        let mut item = Self {
-            text: text.to_lowercase(),
-            clean_text: String::new(),
-            sentence_words: vec![],
-            bigrams: vec![],
-            word_freqs: HashMap::new(),
-            word_freq_avg: 0.0,
-            word_count: 0,
-            bigram_freqs: HashMap::new(),
-            bigram_freq_avg: 0.0,
-            bigram_count: 0,
-            filter: None,
-        };
-
-        item.init();
-
-        item
-    }
-
-    pub fn new_with_filter(text: &str, filter: HashSet<String>) -> Self {
-        let mut item = Self {
-            text: text.to_lowercase(),
-            clean_text: String::new(),
-            sentence_words: vec![],
-            bigrams: vec![],
-            word_freqs: HashMap::new(),
-            word_freq_avg: 0.0,
-            word_count: 0,
-            bigram_freqs: HashMap::new(),
-            bigram_freq_avg: 0.0,
-            bigram_count: 0,
-            filter: Some(filter),
-        };
-
-        item.init();
-
-        item
-    }
-
-    pub fn init(&mut self) {
-        self.text_remove_special_characters();
-        self.extract_sentence_words();
-        self.calculate_word_frequencies();
-        self.calculate_bigrams();
-        self.calculate_bigram_frequencies();
-    }
-
-    #[inline(always)]
-    pub fn calculate_bigrams(&mut self) {
-        let mut bigrams = vec![];
-
-        for sentence in self.sentence_words.iter() {
-            for i in 0..sentence.len() - 1 {
-                if i + 1 > sentence.len() {
-                    break;
-                }
-
-                let bigram = &[
-                    &*sentence[i],
-                    &*sentence[i + 1],
-                ];
-
-                bigrams.push(bigram.join(" "));
-            }
-        }
-
-        self.bigrams = bigrams;
-    }
-
-    #[inline(always)]
-    pub fn calculate_word_frequencies(&mut self) {
-        let mut wordfreqs = HashMap::new();
-
-        let mut word_count = 0;
-
-        for word in self.sentence_words.iter().flatten() {
-            let count = wordfreqs.entry(word.to_string()).or_insert(0);
-
-            *count += 1;
-            word_count += 1;
-        }
-
-        self.word_freq_avg = wordfreqs.values().sum::<usize>() as f32 / wordfreqs.len() as f32;
-        self.word_freqs = wordfreqs;
-        self.word_count = word_count;
-    }
-
-    #[inline(always)]
-    pub fn calculate_bigram_frequencies(&mut self) {
-        let mut bigramfreqs = HashMap::new();
-
-        let mut bigram_count = 0;
-
-        for bigram in self.bigrams.iter() {
-            let count =
-                bigramfreqs
-                    .entry(
-                        bigram.to_string()
-                    )
-                    .or_insert(0);
-
-            *count += 1;
-            bigram_count += 1;
-        }
-
-        self.bigram_freq_avg = bigramfreqs.values().sum::<usize>() as f32 / bigramfreqs.len() as f32;
-        self.bigram_freqs = bigramfreqs;
-        self.bigram_count = bigram_count;
-    }
-
-    #[inline(always)]
-    pub fn text_remove_special_characters(&mut self) {
-        self.clean_text =
-            self.text
-                .chars()
-                .filter(|c| c.is_alphanumeric() || c.is_whitespace())
-                .collect();
-    }
-
-    #[inline(always)]
-    pub fn extract_sentence_words(&mut self) {
-        self.sentence_words =
-            EN_TOKENIZER
-                .pipe(
-                    &self.text
-                )
-                .map(|x|
-                    x
-                        .tokens()
-                        .iter()
-                        .map(|i|
-                            i
-                                .word()
-                                .text()
-                                .as_str()
-                                .to_string()
-                        ).collect::<Vec<_>>()
-                )
-                .collect();
-    }
-
-    #[inline(always)]
-    pub fn get_sentence_words(&self) -> &Vec<Vec<String>> {
-        &self.sentence_words
-    }
-
-    #[inline(always)]
-    pub fn words(&self) -> Vec<&String> {
-        self.sentence_words
-            .iter()
-            .flatten()
-            .collect()
-    }
-}
+pub mod analyzers;
+pub mod text;
+pub mod types;
 
 pub struct Ragegun {
     pub data: TextItem,
@@ -205,23 +15,33 @@ impl Ragegun {
         }
     }
 
+    #[cfg(feature = "age")]
     pub fn age(&self) -> f32 {
-        EXEC_AGE.run(&self.data)
+        analyzers::age::EXEC_AGE.run(&self.data)
     }
 
-    pub fn gender(&self) -> GenderInterpretation {
-        EXEC_GENDER.run(&self.data)
+    #[cfg(feature = "gender")]
+    pub fn gender(&self) -> analyzers::gender::analyzer::GenderInterpretation {
+        analyzers::gender::EXEC_GENDER.run(&self.data)
     }
 
+    #[cfg(feature = "distress")]
     pub fn distress(&self) -> f32 {
-        EXEC_DISTRESS.run(&self.data)
+        analyzers::distress::EXEC_DISTRESS.run(&self.data)
     }
 
-    pub fn perma(&self) -> PERMAAnalysis {
-        EXEC_PERMA.run(&self.data)
+    #[cfg(feature = "perma")]
+    pub fn perma(&self) -> analyzers::perma::analyzer::PERMAAnalysis {
+        analyzers::perma::EXEC_PERMA.run(&self.data)
     }
 
-    pub fn emolex(&self) -> EmoLexEmotions {
-        EXEC_EMOLEX.run(&self.data)
+    #[cfg(feature = "emolex_all_languages")]
+    pub fn emolex_all_languages(&self) -> analyzers::emolex_shared::EmoLexEmotions {
+        analyzers::emolex_all_languages::EXEC_EMOLEX_ALL_LANGUAGES.run(&self.data)
+    }
+
+    #[cfg(feature = "emolex_all_languages")]
+    pub fn emolex_english(&self) -> analyzers::emolex_shared::EmoLexEmotions {
+        analyzers::emolex_english::EXEC_EMOLEX_ENGLISH.run(&self.data)
     }
 }

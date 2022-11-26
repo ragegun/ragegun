@@ -3,9 +3,9 @@ use std::ops::{Div, Mul};
 
 use serde::{Deserialize, Serialize};
 
-use crate::assets::types::values::AnalysisInterpretation;
-use crate::assets::WEIGHTS_PERMA;
 use crate::TextItem;
+
+use super::data::WEIGHTS_PERMA;
 
 #[derive(Debug, Copy, Clone, Hash, Eq, PartialEq, Serialize, Deserialize)]
 pub enum PERMAClass {
@@ -32,19 +32,26 @@ pub enum PERMAClass {
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Serialize, Deserialize)]
-pub struct PERMAAnalysis {
-    pub positive_emotion: AnalysisInterpretation,
-    pub engagement: AnalysisInterpretation,
-    pub relationships: AnalysisInterpretation,
-    pub meaning: AnalysisInterpretation,
-    pub accomplishment: AnalysisInterpretation,
+pub enum PERMAInterpretation {
+    Positive,
+    Neutral,
+    Negative,
 }
 
-fn establish_interpretation(val: f32) -> AnalysisInterpretation {
+#[derive(Debug, Copy, Clone, PartialEq, Serialize, Deserialize)]
+pub struct PERMAAnalysis {
+    pub positive_emotion: PERMAInterpretation,
+    pub engagement: PERMAInterpretation,
+    pub relationships: PERMAInterpretation,
+    pub meaning: PERMAInterpretation,
+    pub accomplishment: PERMAInterpretation,
+}
+
+fn establish_interpretation(val: f32) -> PERMAInterpretation {
     match val {
-        _ if val > 0.0 => AnalysisInterpretation::Positive,
-        _ if val < 0.0 => AnalysisInterpretation::Negative,
-        _ => AnalysisInterpretation::Neutral,
+        _ if val > 0.0 => PERMAInterpretation::Positive,
+        _ if val < 0.0 => PERMAInterpretation::Negative,
+        _ => PERMAInterpretation::Neutral,
     }
 }
 
