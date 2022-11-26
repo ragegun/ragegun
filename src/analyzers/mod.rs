@@ -19,6 +19,5 @@ pub mod emolex_all_languages;
 #[cfg(feature = "emolex_english")]
 pub mod emolex_english;
 
-#[cfg(feature = "emolex_all_languages")]
-#[cfg(feature = "emolex_english")]
+#[cfg(feature = "emolex_shared")]
 pub mod emolex_shared;

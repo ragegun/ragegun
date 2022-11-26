@@ -16,9 +16,10 @@ affection = []
 distress = []
 gender = []
 perma = []
-emolex_english = []
+emolex_shared = []
+emolex_english = ["emolex_shared"]
 # all language emolex is 20MB
-emolex_all_languages = []
+emolex_all_languages = ["emolex_shared"]
 
 [lib]
 crate-type = ["cdylib", "rlib"]
